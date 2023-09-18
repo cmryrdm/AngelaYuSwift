@@ -65,10 +65,10 @@ extension WeatherViewController: UITextFieldDelegate {
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController: WeatherManagerDelegate {
   func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-    DispatchQueue.main.async {
-      self.temperatureLabel.text = weather.temperatureString
-      self.cityLabel.text = weather.cityName
-      self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+    DispatchQueue.main.async { [weak self] in
+      self?.temperatureLabel.text = weather.temperatureString
+      self?.cityLabel.text = weather.cityName
+      self?.conditionImageView.image = UIImage(systemName: weather.conditionName)
     }
   }
   
@@ -91,7 +91,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
     let lat = location.coordinate.latitude
     let lon = location.coordinate.longitude
     
-    self.weatherManager.fetchWeather(lat: lat, lon: lon)
+    weatherManager.fetchWeather(lat: lat, lon: lon)
   }
   
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
