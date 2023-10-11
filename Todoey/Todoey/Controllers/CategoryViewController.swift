@@ -6,10 +6,10 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
-  
+  let realm = try! Realm()
   let appearance = UINavigationBarAppearance()
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   var categoryArray = [Category]()
@@ -36,7 +36,7 @@ class CategoryViewController: UITableViewController {
     navigationItem.rightBarButtonItem = addButton
     navigationItem.rightBarButtonItem?.tintColor = .white
     
-    self.loadCategories()
+//    self.loadCategories()
   }
   
   // Add new item
@@ -45,10 +45,10 @@ class CategoryViewController: UITableViewController {
     let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
     
     let action = UIAlertAction(title: "Add Cateogry", style: .default) { action in
-      let category = Category(context: self.context)
-      category.name = textField?.text
+      let category = Category()
+      category.name = textField?.text ?? ""
       self.categoryArray.append(category)
-      self.saveCategories()
+      self.save(category: category)
     }
     
     alert.addTextField { alertTextField in
@@ -61,23 +61,25 @@ class CategoryViewController: UITableViewController {
   }
   
   // MARK: - Data manipulation
-  func saveCategories() {
+  func save(category: Category) {
     do {
-      try context.save()
+      try realm.write {
+        realm.add(category)
+      }
     } catch {
       print(error.localizedDescription)
     }
     self.tableView.reloadData()
   }
   
-  func loadCategories() {
-    do {
-      categoryArray = try context.fetch(Category.fetchRequest())
-    } catch {
-      print(error.localizedDescription)
-    }
-    tableView.reloadData()
-  }
+//  func loadCategories() {
+//    do {
+//      categoryArray = try context.fetch(Category.fetchRequest())
+//    } catch {
+//      print(error.localizedDescription)
+//    }
+//    tableView.reloadData()
+//  }
 
   // MARK: - Table view data source
   override func numberOfSections(in tableView: UITableView) -> Int {
@@ -95,13 +97,13 @@ class CategoryViewController: UITableViewController {
     return cell
   }
   
-  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-    if editingStyle == .delete {
-      context.delete(categoryArray[indexPath.row])
-      categoryArray.remove(at: indexPath.row)
-      saveCategories()
-    }
-  }
+//  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+//    if editingStyle == .delete {
+//      context.delete(categoryArray[indexPath.row])
+//      categoryArray.remove(at: indexPath.row)
+//      save()
+//    }
+//  }
   
   // MARK: - Table view delegate
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
