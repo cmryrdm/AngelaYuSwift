@@ -11,7 +11,7 @@ import RealmSwift
 class CategoryViewController: UITableViewController {
   let realm = try! Realm()
   let appearance = UINavigationBarAppearance()
-  var categories : Results<Category>!
+  var categories : Results<Category>?
   var addButton: UIBarButtonItem?
   
   static func instantiate() -> CategoryViewController {
@@ -35,10 +35,10 @@ class CategoryViewController: UITableViewController {
     navigationItem.rightBarButtonItem = addButton
     navigationItem.rightBarButtonItem?.tintColor = .white
     
-    self.loadCategories()
+    loadCategories()
   }
   
-  // Add new item
+  // Add new category
   @objc func addButtonPressed() {
     var textField: UITextField?
     let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
@@ -67,7 +67,18 @@ class CategoryViewController: UITableViewController {
     } catch {
       print(error.localizedDescription)
     }
-    self.tableView.reloadData()
+    tableView.reloadData()
+  }
+  
+  func delete(category: Category) {
+    do {
+      try realm.write {
+        realm.delete(category)
+      }
+    } catch {
+      print(error.localizedDescription)
+    }
+    tableView.reloadData()
   }
   
   func loadCategories() {
@@ -81,31 +92,28 @@ class CategoryViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return categories.count
+    return categories?.count ?? 1
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-    let category = categories[indexPath.row]
-    cell.textLabel?.text = category.name
+    cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
     return cell
   }
   
-//  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//    if editingStyle == .delete {
-//      context.delete(categoryArray[indexPath.row])
-//      categoryArray.remove(at: indexPath.row)
-//      save()
-//    }
-//  }
+  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      if let category = categories?[indexPath.row] {
+        delete(category: category)
+      }
+    }
+  }
   
   // MARK: - Table view delegate
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let destinationVC = TodoListViewController.instantiate()
-    destinationVC.selectedCategory = categories[indexPath.row]
-    //self.present(TodoListViewController.instantiate(), animated: true)
+    destinationVC.selectedCategory = categories?[indexPath.row]
     self.navigationController?.pushViewController(destinationVC, animated: true)
-    //tableView.deselectRow(at: indexPath, animated: true)
   }
   
   override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
