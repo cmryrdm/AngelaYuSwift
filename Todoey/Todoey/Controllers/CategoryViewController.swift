@@ -11,8 +11,7 @@ import RealmSwift
 class CategoryViewController: UITableViewController {
   let realm = try! Realm()
   let appearance = UINavigationBarAppearance()
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  var categoryArray = [Category]()
+  var categories : Results<Category>!
   var addButton: UIBarButtonItem?
   
   static func instantiate() -> CategoryViewController {
@@ -36,7 +35,7 @@ class CategoryViewController: UITableViewController {
     navigationItem.rightBarButtonItem = addButton
     navigationItem.rightBarButtonItem?.tintColor = .white
     
-//    self.loadCategories()
+    self.loadCategories()
   }
   
   // Add new item
@@ -47,7 +46,6 @@ class CategoryViewController: UITableViewController {
     let action = UIAlertAction(title: "Add Cateogry", style: .default) { action in
       let category = Category()
       category.name = textField?.text ?? ""
-      self.categoryArray.append(category)
       self.save(category: category)
     }
     
@@ -72,14 +70,10 @@ class CategoryViewController: UITableViewController {
     self.tableView.reloadData()
   }
   
-//  func loadCategories() {
-//    do {
-//      categoryArray = try context.fetch(Category.fetchRequest())
-//    } catch {
-//      print(error.localizedDescription)
-//    }
-//    tableView.reloadData()
-//  }
+  func loadCategories() {
+    categories = realm.objects(Category.self)
+    tableView.reloadData()
+  }
 
   // MARK: - Table view data source
   override func numberOfSections(in tableView: UITableView) -> Int {
@@ -87,12 +81,12 @@ class CategoryViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return categoryArray.count
+    return categories.count
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-    let category = categoryArray[indexPath.row]
+    let category = categories[indexPath.row]
     cell.textLabel?.text = category.name
     return cell
   }
@@ -108,7 +102,7 @@ class CategoryViewController: UITableViewController {
   // MARK: - Table view delegate
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let destinationVC = TodoListViewController.instantiate()
-    destinationVC.selectedCategory = categoryArray[indexPath.row]
+    destinationVC.selectedCategory = categories[indexPath.row]
     //self.present(TodoListViewController.instantiate(), animated: true)
     self.navigationController?.pushViewController(destinationVC, animated: true)
     //tableView.deselectRow(at: indexPath, animated: true)
