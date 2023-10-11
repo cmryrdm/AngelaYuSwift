@@ -14,26 +14,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    // Create a window
     window = UIWindow(frame: UIScreen.main.bounds)
-    
-    // Create an instance of your TodoListViewController
-    let todoListViewController = TodoListViewController.instantiate()
-    
-    // Create a navigation controller and set TodoListViewController as the root view controller
-    let navigationController = UINavigationController(rootViewController: todoListViewController)
-    
-    // Set the navigation controller as the root view controller of the window
+    let categoryViewController = CategoryViewController.instantiate()
+    let navigationController = UINavigationController(rootViewController: categoryViewController)
     // for SwiftUI assign hostingController <<<<<<<<<<<<<<<< !!!
     window?.rootViewController = navigationController
-    
-    // Make the window visible
     window?.makeKeyAndVisible()
-    
     // user defaults save data to plist in a sandbox (id) of a simulator (id)
     //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
-    
-    
     return true
   }
   

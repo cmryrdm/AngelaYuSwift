@@ -14,6 +14,7 @@
 		F09D83282ACAEBFC001823C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F09D83272ACAEBFC001823C0 /* Assets.xcassets */; };
 		F09D832B2ACAEBFC001823C0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F09D83292ACAEBFC001823C0 /* LaunchScreen.storyboard */; };
 		F0DB17762AD4195600BCCF12 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F0DB17742AD4195600BCCF12 /* DataModel.xcdatamodeld */; };
+		F0F983EC2AD5B5CE00EE4B01 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F983EB2AD5B5CE00EE4B01 /* CategoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		F09D83272ACAEBFC001823C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F09D832A2ACAEBFC001823C0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F0DB17752AD4195600BCCF12 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
+		F0F983EB2AD5B5CE00EE4B01 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				F09D831E2ACAEBFB001823C0 /* AppDelegate.swift */,
+				F0F983EB2AD5B5CE00EE4B01 /* CategoryViewController.swift */,
 				F09D83222ACAEBFB001823C0 /* TodoListViewController.swift */,
 				F0DB17742AD4195600BCCF12 /* DataModel.xcdatamodeld */,
 				F09D83242ACAEBFB001823C0 /* Main.storyboard */,
@@ -204,6 +207,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0F983EC2AD5B5CE00EE4B01 /* CategoryViewController.swift in Sources */,
 				F09D83232ACAEBFB001823C0 /* TodoListViewController.swift in Sources */,
 				F0DB17762AD4195600BCCF12 /* DataModel.xcdatamodeld in Sources */,
 				F09D831F2ACAEBFB001823C0 /* AppDelegate.swift in Sources */,
