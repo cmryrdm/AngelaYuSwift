@@ -6,21 +6,19 @@
 //
 
 import UIKit
-import CoreData
-import SnapKit
+import RealmSwift
 
 class TodoListViewController: UITableViewController {
   
+  let realm = try! Realm()
   let appearance = UINavigationBarAppearance()
-  let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  var itemArray = [Item]()
+  var todoItems : Results<Item>?
   var addButton: UIBarButtonItem?
   var backButton: UIBarButtonItem?
   var searchBar: UISearchBar?
   var selectedCategory: Category? {
     didSet {
-//      loadItems()
+      loadItems()
     }
   }
   
@@ -40,7 +38,7 @@ class TodoListViewController: UITableViewController {
     navigationController?.navigationBar.scrollEdgeAppearance = appearance
     navigationItem.title = "Items"
     
-//    addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
+    addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
     navigationItem.rightBarButtonItem = addButton
     navigationItem.rightBarButtonItem?.tintColor = .white
     
@@ -55,60 +53,55 @@ class TodoListViewController: UITableViewController {
     tableView.tableHeaderView = searchBar
   }
   
-//  @objc func addButtonPressed() {
-//    var textField: UITextField?
-//    let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
-//    
-//    let action = UIAlertAction(title: "Add Item", style: .default) { action in
-//      let item = Item(context: self.context)
-//      item.title = textField?.text ?? ""
-//      item.parentCategory = self.selectedCategory
-//      item.done = false
-//      self.itemArray.append(item)
-//      self.saveItems()
-//    }
-//    
-//    alert.addTextField { alertTextField in
-//      alertTextField.placeholder = "Create new item"
-//      textField = alertTextField
-//    }
-//    
-//    alert.addAction(action)
-//    present(alert, animated: true, completion: nil)
-//  }
+  @objc func addButtonPressed() {
+    var textField: UITextField?
+    let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+    
+    
+    
+    let action = UIAlertAction(title: "Add Item", style: .default) { action in
+      if let currentCategory = self.selectedCategory {
+        do {
+          try self.realm.write {
+            let item = Item()
+            item.title = textField?.text ?? ""
+            currentCategory.items.append(item)
+          }
+        } catch {
+          print(error.localizedDescription)
+        }
+      }
+      self.tableView.reloadData()
+    }
+    
+    alert.addTextField { alertTextField in
+      alertTextField.placeholder = "Create new item"
+      textField = alertTextField
+    }
+    
+    alert.addAction(action)
+    present(alert, animated: true, completion: nil)
+  }
   
   @objc func backButtonPressed() {
     navigationController?.popViewController(animated: true)
   }
-  
-  func saveItems() {
+  func delete(item: Item) {
     do {
-      try context.save()
+      try realm.write {
+        realm.delete(item)
+      }
     } catch {
       print(error.localizedDescription)
     }
-    self.tableView.reloadData() // to show the new item on the tableView
+    tableView.reloadData()
   }
   
   // if no value passed Item.fetchRequest() called!
-//  func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), including predicate: NSPredicate? = nil) {
-//    let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-//    
-//    if let additionalPredicate = predicate {
-//      request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [additionalPredicate,categoryPredicate])
-//    } else {
-//      request.predicate = categoryPredicate
-//    }
-//    
-//    do {
-//      itemArray = try context.fetch(request)
-//    } catch {
-//      print(error.localizedDescription)
-//    }
-//    tableView.reloadData()
-//    
-//  }
-  
+  func loadItems() {
+    todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+    tableView.reloadData()
+  }
   
   //MARK: - Tableview datasource methods
   override func numberOfSections(in tableView: UITableView) -> Int {
@@ -116,31 +109,40 @@ class TodoListViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return itemArray.count
+    return todoItems?.count ?? 1
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
-    let item = itemArray[indexPath.row]
-    cell.textLabel?.text = item.title
-    cell.accessoryType = item.done ? .checkmark : .none
+    if let item = todoItems?[indexPath.row] {
+      cell.textLabel?.text = item.title
+      cell.accessoryType = item.done ? .checkmark : .none
+    } else {
+      cell.textLabel?.text = "No items added"
+    }
     return cell
   }
   
-//  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//    if editingStyle == .delete {
-//      context.delete(itemArray[indexPath.row])
-//      itemArray.remove(at: indexPath.row)
-//      saveItems()
-//    }
-//  }
+  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      if let item = todoItems?[indexPath.row] {
+        delete(item: item)
+      }
+    }
+  }
   
   //MARK: - Tableview delegate methods
   override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    let item = itemArray[indexPath.row]
-    item.done = !item.done
-    
-    saveItems()
+    if let item = todoItems?[indexPath.row] {
+      do {
+        try realm.write {
+          item.done = !item.done
+        }
+      } catch {
+        print(error.localizedDescription)
+      }
+    }
+    tableView.reloadData()
     tableView.deselectRow(at: indexPath, animated: true)
   }
   

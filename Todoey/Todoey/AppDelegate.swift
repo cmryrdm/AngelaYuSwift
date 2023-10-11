@@ -23,7 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window?.makeKeyAndVisible()
     // user defaults save data to plist in a sandbox (id) of a simulator (id)
     //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
-    print(Realm.Configuration.defaultConfiguration.fileURL)
+    
+//    print(Realm.Configuration.defaultConfiguration.fileURL)
     do {
       let realm = try Realm()
     } catch {
