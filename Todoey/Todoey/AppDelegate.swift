@@ -24,11 +24,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
     
     //print(Realm.Configuration.defaultConfiguration.fileURL)
-    do {
-      _ = try Realm()
-    } catch {
-      print(error.localizedDescription)
-    }
+//    do {
+//      _ = try Realm()
+//    } catch {
+//      print(error.localizedDescription)
+//    }
     return true
   }
 }

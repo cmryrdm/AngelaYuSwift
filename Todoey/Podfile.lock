@@ -1,26 +1,28 @@
 PODS:
+  - ChameleonFramework (2.1.0):
+    - ChameleonFramework/Default (= 2.1.0)
+  - ChameleonFramework/Default (2.1.0)
   - Realm (10.42.3):
     - Realm/Headers (= 10.42.3)
   - Realm/Headers (10.42.3)
   - RealmSwift (10.42.3):
     - Realm (= 10.42.3)
-  - SnapKit (5.6.0)
 
 DEPENDENCIES:
+  - ChameleonFramework (~> 2.1)
   - RealmSwift (~> 10.42)
-  - SnapKit (~> 5.6)
 
 SPEC REPOS:
   trunk:
+    - ChameleonFramework
     - Realm
     - RealmSwift
-    - SnapKit
 
 SPEC CHECKSUMS:
+  ChameleonFramework: d21a3cc247abfe5e37609a283a8238b03575cf64
   Realm: ac7fa0100533e1c91511b19a58e837f9cfd80bb7
   RealmSwift: a06d4e3c623a5f236bd9fe214f0bfdfee20312c2
-  SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
 
-PODFILE CHECKSUM: 90a800392b84ae5d1837e2068de90630d166de43
+PODFILE CHECKSUM: fe5191a08e12deddd2c2c4085aba6d48505414f6
 
 COCOAPODS: 1.12.1

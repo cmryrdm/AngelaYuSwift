@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class CategoryViewController: UITableViewController {
   let realm = try! Realm()
@@ -22,8 +23,8 @@ class CategoryViewController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
+    tableView.separatorStyle = .none
     
     appearance.configureWithOpaqueBackground()
     appearance.backgroundColor = UIColor.systemBlue
@@ -46,6 +47,7 @@ class CategoryViewController: UITableViewController {
     let action = UIAlertAction(title: "Add Cateogry", style: .default) { action in
       let category = Category()
       category.name = textField?.text ?? ""
+      category.colorHex = UIColor.flatWhite().withAlphaComponent(0.1).hexValue()
       self.save(category: category)
     }
     
@@ -98,6 +100,10 @@ class CategoryViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
     cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
+    if (categories?[indexPath.row]) != nil {
+      cell.backgroundColor = UIColor(hexString: categories![indexPath.row].colorHex).darken(byPercentage: CGFloat(indexPath.row) / CGFloat(categories!.count))
+    }
+    cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: cell.backgroundColor, isFlat: true)
     return cell
   }
   

@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: UITableViewController {
   let realm = try! Realm()
@@ -30,6 +31,7 @@ class TodoListViewController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TodoItemCell")
+    tableView.separatorStyle = .none
     
     appearance.configureWithOpaqueBackground()
     appearance.backgroundColor = UIColor.systemBlue
@@ -117,6 +119,10 @@ class TodoListViewController: UITableViewController {
     if let item = todoItems?[indexPath.row] {
       cell.textLabel?.text = item.title
       cell.accessoryType = item.done ? .checkmark : .none
+      if let colorHex = selectedCategory?.colorHex {
+        cell.backgroundColor = UIColor(hexString: colorHex).darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count))
+        cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: cell.backgroundColor, isFlat: true)
+      }
     } else {
       cell.textLabel?.text = "No items added"
     }

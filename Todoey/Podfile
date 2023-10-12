@@ -1,12 +1,15 @@
-# Uncomment the next line to define a global platform for your project
+#  Uncomment the next line to define a global platform for your project
 platform :ios, '13.0'
 
 target 'Todoey' do
-  # Comment the next line if you don't want to use dynamic frameworks
+#  Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for Todoey
-  pod 'SnapKit', '~> 5.6'
+#  Pods for Todoey
+
+#  pod 'SnapKit', '~> 5.6'
+#  pod 'SwipeCellKit', '~> 2.7'
   pod 'RealmSwift', '~> 10.42'
+  pod 'ChameleonFramework', '~> 2.1'
 
 end
