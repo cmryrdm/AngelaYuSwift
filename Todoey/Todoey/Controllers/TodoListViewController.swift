@@ -11,7 +11,6 @@ import ChameleonFramework
 
 class TodoListViewController: UITableViewController {
   let realm = try! Realm()
-  let appearance = UINavigationBarAppearance()
   var todoItems : Results<Item>?
   var addButton: UIBarButtonItem?
   var backButton: UIBarButtonItem?
@@ -30,14 +29,21 @@ class TodoListViewController: UITableViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    searchBar = UISearchBar()
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TodoItemCell")
     tableView.separatorStyle = .none
+     // <<<<<<<<<<<<<<<<<<
     
-    appearance.configureWithOpaqueBackground()
-    appearance.backgroundColor = UIColor.systemBlue
-    navigationController?.navigationBar.standardAppearance = appearance
-    navigationController?.navigationBar.scrollEdgeAppearance = appearance
-    navigationItem.title = "Items"
+    navigationController?.navigationBar.barTintColor = .clear
+    navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+    navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+   
+    if let colorHex = selectedCategory?.colorHex {
+      navigationItem.title = selectedCategory!.name
+      tableView.backgroundColor = UIColor(hexString: colorHex)
+      searchBar?.barTintColor = UIColor(hexString: colorHex)
+      navigationController?.navigationBar.tintColor = UIColor(contrastingBlackOrWhiteColorOn: UIColor(hexString: colorHex), isFlat: true)
+    }
     
     addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
     navigationItem.rightBarButtonItem = addButton
@@ -47,11 +53,13 @@ class TodoListViewController: UITableViewController {
     navigationItem.leftBarButtonItem = backButton
     navigationItem.leftBarButtonItem?.tintColor = .white
     
-    searchBar = UISearchBar()
+    
     searchBar?.placeholder = "Search"
     searchBar?.delegate = self
     searchBar?.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 44)
+    searchBar?.searchTextField.backgroundColor = .white
     tableView.tableHeaderView = searchBar
+    
   }
   
   @objc func addButtonPressed() {

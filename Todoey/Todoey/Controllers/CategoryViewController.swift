@@ -11,7 +11,6 @@ import ChameleonFramework
 
 class CategoryViewController: UITableViewController {
   let realm = try! Realm()
-  let appearance = UINavigationBarAppearance()
   var categories : Results<Category>?
   var addButton: UIBarButtonItem?
   
@@ -25,11 +24,11 @@ class CategoryViewController: UITableViewController {
     super.viewDidLoad()
     tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
     tableView.separatorStyle = .none
+    tableView.backgroundColor = .flatSkyBlue()
     
-    appearance.configureWithOpaqueBackground()
-    appearance.backgroundColor = UIColor.systemBlue
-    navigationController?.navigationBar.standardAppearance = appearance
-    navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    navigationController?.navigationBar.barTintColor = .clear
+    navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+    navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
     navigationItem.title = "Todoey"
     
     addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
@@ -47,7 +46,7 @@ class CategoryViewController: UITableViewController {
     let action = UIAlertAction(title: "Add Cateogry", style: .default) { action in
       let category = Category()
       category.name = textField?.text ?? ""
-      category.colorHex = UIColor.flatWhite().withAlphaComponent(0.1).hexValue()
+      category.colorHex = UIColor.randomFlat().hexValue()
       self.save(category: category)
     }
     
@@ -101,7 +100,7 @@ class CategoryViewController: UITableViewController {
     let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
     cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
     if (categories?[indexPath.row]) != nil {
-      cell.backgroundColor = UIColor(hexString: categories![indexPath.row].colorHex).darken(byPercentage: CGFloat(indexPath.row) / CGFloat(categories!.count))
+      cell.backgroundColor = UIColor(hexString: categories![indexPath.row].colorHex)//.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(categories!.count))
     }
     cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: cell.backgroundColor, isFlat: true)
     return cell

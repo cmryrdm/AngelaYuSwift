@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     window = UIWindow(frame: UIScreen.main.bounds)
     let categoryViewController = CategoryViewController.instantiate()
     let navigationController = UINavigationController(rootViewController: categoryViewController)
+    navigationController.navigationBar.prefersLargeTitles = true
     // for SwiftUI assign hostingController <<<<<<<<<<<<<<<< !!!
     window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
