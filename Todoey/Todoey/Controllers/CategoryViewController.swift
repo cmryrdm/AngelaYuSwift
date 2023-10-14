@@ -14,44 +14,46 @@ class CategoryViewController: UITableViewController {
   var categories : Results<Category>?
   var addButton: UIBarButtonItem?
   
+  // Coordinator?
   static func instantiate() -> CategoryViewController {
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    let storyboard = UIStoryboard(name: Const.storyboard, bundle: nil)
     let viewController = CategoryViewController(style: .plain)
     return viewController
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: Const.categoryIdentifier)
     tableView.separatorStyle = .none
-    tableView.backgroundColor = .flatSkyBlue()
+    tableView.backgroundColor = Const.categoryBgColor
+    navigationItem.title = Const.categoryTitle
     
+    // Coordinator?
     navigationController?.navigationBar.barTintColor = .clear
     navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
     navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
-    navigationItem.title = "Todoey"
     
     addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonPressed))
     navigationItem.rightBarButtonItem = addButton
-    navigationItem.rightBarButtonItem?.tintColor = .white
+    navigationItem.rightBarButtonItem?.tintColor = .white // OK?
     
-    loadCategories()
+    load()
   }
   
   // Add new category
   @objc func addButtonPressed() {
     var textField: UITextField?
-    let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: Const.categoryAlertTitle, message: "", preferredStyle: .alert)
     
-    let action = UIAlertAction(title: "Add Cateogry", style: .default) { action in
+    let action = UIAlertAction(title: Const.categoryAlertAction, style: .default) { action in
       let category = Category()
       category.name = textField?.text ?? ""
       category.colorHex = UIColor.randomFlat().hexValue()
-      self.save(category: category)
+      self.save(category)
     }
     
     alert.addTextField { alertTextField in
-      alertTextField.placeholder = "Create new category"
+      alertTextField.placeholder = Const.categoryAlertPlaceholder
       textField = alertTextField
     }
     
@@ -60,7 +62,7 @@ class CategoryViewController: UITableViewController {
   }
   
   // MARK: - Data manipulation
-  func save(category: Category) {
+  func save(_ category: Category) {
     do {
       try realm.write {
         realm.add(category)
@@ -71,7 +73,7 @@ class CategoryViewController: UITableViewController {
     tableView.reloadData()
   }
   
-  func delete(category: Category) {
+  func delete(_ category: Category) {
     do {
       try realm.write {
         realm.delete(category)
@@ -82,7 +84,7 @@ class CategoryViewController: UITableViewController {
     tableView.reloadData()
   }
   
-  func loadCategories() {
+  func load() {
     categories = realm.objects(Category.self)
     tableView.reloadData()
   }
@@ -97,8 +99,8 @@ class CategoryViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-    cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
+    let cell = tableView.dequeueReusableCell(withIdentifier: Const.categoryIdentifier, for: indexPath)
+    cell.textLabel?.text = categories?[indexPath.row].name ?? Const.categoryNil
     if (categories?[indexPath.row]) != nil {
       cell.backgroundColor = UIColor(hexString: categories![indexPath.row].colorHex)//.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(categories!.count))
     }
@@ -109,7 +111,7 @@ class CategoryViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
       if let category = categories?[indexPath.row] {
-        delete(category: category)
+        delete(category)
       }
     }
   }

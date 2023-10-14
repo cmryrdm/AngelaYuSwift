@@ -18,13 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let categoryViewController = CategoryViewController.instantiate()
     let navigationController = UINavigationController(rootViewController: categoryViewController)
     navigationController.navigationBar.prefersLargeTitles = true
-    // for SwiftUI assign hostingController <<<<<<<<<<<<<<<< !!!
+//     for SwiftUI assign hostingController <<<<<<<<<<<<<<<< !!!
     window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
-    // user defaults save data to plist in a sandbox (id) of a simulator (id)
-    //print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
-    
-    //print(Realm.Configuration.defaultConfiguration.fileURL)
+//     user defaults save data to plist in a sandbox (id) of a simulator (id)
+//    print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String)
+//    
+//    print(Realm.Configuration.defaultConfiguration.fileURL)
 //    do {
 //      _ = try Realm()
 //    } catch {

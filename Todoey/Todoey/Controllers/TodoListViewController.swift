@@ -17,12 +17,12 @@ class TodoListViewController: UITableViewController {
   var searchBar: UISearchBar?
   var selectedCategory: Category? {
     didSet {
-      loadItems()
+      load()
     }
   }
   
   static func instantiate() -> TodoListViewController {
-    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    let storyboard = UIStoryboard(name: Const.storyboard, bundle: nil)
     let viewController = TodoListViewController(style: .plain)
     return viewController
   }
@@ -30,9 +30,8 @@ class TodoListViewController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     searchBar = UISearchBar()
-    tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TodoItemCell")
+    tableView.register(UITableViewCell.self, forCellReuseIdentifier: Const.itemIdentifier)
     tableView.separatorStyle = .none
-     // <<<<<<<<<<<<<<<<<<
     
     navigationController?.navigationBar.barTintColor = .clear
     navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
@@ -49,12 +48,11 @@ class TodoListViewController: UITableViewController {
     navigationItem.rightBarButtonItem = addButton
     navigationItem.rightBarButtonItem?.tintColor = .white
     
-    backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"), style: .plain, target: self, action: #selector(backButtonPressed))
+    backButton = UIBarButtonItem(image: UIImage(systemName: Const.backButtonImage), style: .plain, target: self, action: #selector(backButtonPressed))
     navigationItem.leftBarButtonItem = backButton
     navigationItem.leftBarButtonItem?.tintColor = .white
     
-    
-    searchBar?.placeholder = "Search"
+    searchBar?.placeholder = Const.searchBarPlaceholder
     searchBar?.delegate = self
     searchBar?.frame = CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 44)
     searchBar?.searchTextField.backgroundColor = .white
@@ -64,28 +62,14 @@ class TodoListViewController: UITableViewController {
   
   @objc func addButtonPressed() {
     var textField: UITextField?
-    let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: Const.itemAlertTitle, message: "", preferredStyle: .alert)
     
-    
-    
-    let action = UIAlertAction(title: "Add Item", style: .default) { action in
-      if let currentCategory = self.selectedCategory {
-        do {
-          try self.realm.write {
-            let item = Item()
-            item.title = textField?.text ?? ""
-            item.dateCreated = Date()
-            currentCategory.items.append(item)
-          }
-        } catch {
-          print(error.localizedDescription)
-        }
-      }
-      self.tableView.reloadData()
+    let action = UIAlertAction(title: Const.itemAlertAction, style: .default) { action in
+      self.save(textField?.text ?? "")
     }
     
     alert.addTextField { alertTextField in
-      alertTextField.placeholder = "Create new item"
+      alertTextField.placeholder = Const.itemAlertPlaceholder
       textField = alertTextField
     }
     
@@ -96,7 +80,25 @@ class TodoListViewController: UITableViewController {
   @objc func backButtonPressed() {
     navigationController?.popViewController(animated: true)
   }
-  func delete(item: Item) {
+  
+  // MARK: - Data manipulation
+  func save(_ title: String) {
+    if let currentCategory = self.selectedCategory {
+      do {
+        try self.realm.write {
+          let item = Item()
+          item.title = title
+          item.dateCreated = Date()
+          currentCategory.items.append(item)
+        }
+      } catch {
+        print(error.localizedDescription)
+      }
+    }
+    tableView.reloadData()
+  }
+  
+  func delete(_ item: Item) {
     do {
       try realm.write {
         realm.delete(item)
@@ -107,9 +109,8 @@ class TodoListViewController: UITableViewController {
     tableView.reloadData()
   }
   
-  // if no value passed Item.fetchRequest() called!
-  func loadItems() {
-    todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
+  func load() {
+    todoItems = selectedCategory?.items.sorted(byKeyPath: Const.itemSort, ascending: true)
     tableView.reloadData()
   }
   
@@ -123,7 +124,7 @@ class TodoListViewController: UITableViewController {
   }
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "TodoItemCell", for: indexPath)
+    let cell = tableView.dequeueReusableCell(withIdentifier: Const.itemIdentifier, for: indexPath)
     if let item = todoItems?[indexPath.row] {
       cell.textLabel?.text = item.title
       cell.accessoryType = item.done ? .checkmark : .none
@@ -132,7 +133,7 @@ class TodoListViewController: UITableViewController {
         cell.textLabel?.textColor = UIColor(contrastingBlackOrWhiteColorOn: cell.backgroundColor, isFlat: true)
       }
     } else {
-      cell.textLabel?.text = "No items added"
+      cell.textLabel?.text = Const.itemNil
     }
     return cell
   }
@@ -140,7 +141,7 @@ class TodoListViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
       if let item = todoItems?[indexPath.row] {
-        delete(item: item)
+        delete(item)
       }
     }
   }
@@ -163,21 +164,18 @@ class TodoListViewController: UITableViewController {
   override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
     return .delete
   }
-  
-  
-  
 }
 
 // MARK: - SearchBar delegate methods
 extension TodoListViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-    todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "dateCreated", ascending: false)
+    todoItems = todoItems?.filter(Const.searchQuery, searchBar.text!).sorted(byKeyPath: Const.searchSort, ascending: false)
     tableView.reloadData()
   }
   
   func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
     if searchBar.text?.count == 0 {
-      loadItems()
+      load()
       DispatchQueue.main.async {
         searchBar.resignFirstResponder()
       }
