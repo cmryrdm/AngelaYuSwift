@@ -33,6 +33,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     navigationItem.titleView?.backgroundColor = .systemGreen.withAlphaComponent(0.5)
     view.backgroundColor = .systemGreen
+    label.text = ""
   }
 
   @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
