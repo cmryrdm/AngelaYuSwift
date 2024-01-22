@@ -20,6 +20,10 @@
 				</dict>
 			</array>
 		</dict>
+		<key></key>
+		<false/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>We need your camera to take photos of flowers.</string>
 </dict>
 </plist>

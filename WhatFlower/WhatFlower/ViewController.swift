@@ -81,10 +81,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         let flowerJSON: JSON = JSON(value)
         let pageId = flowerJSON["query"]["pageids"][0].stringValue
         let flowerDescription = flowerJSON["query"]["pages"][pageId]["extract"].stringValue
-        let flowerImageUrl = flowerJSON["query"]["pages"][pageId]["thumbnail"]["source"].stringValue
+//        let flowerImageUrl = flowerJSON["query"]["pages"][pageId]["thumbnail"]["source"].stringValue
         
         self.label.text = flowerDescription
-        self.imageView.sd_setImage(with: URL(string: flowerImageUrl))
+//        self.imageView.sd_setImage(with: URL(string: flowerImageUrl))
         
       case .failure(let error):
         print(error.localizedDescription)
@@ -96,12 +96,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 
 extension ViewController: UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-    if let userPickedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+    if let userPickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
       guard let convertedCIImage = CIImage(image: userPickedImage) else {
         fatalError("Cannot convert to CIImage")
       }
       detect(image: convertedCIImage)
-//      imageView.image = userPickedImage
+      imageView.image = userPickedImage
     }
     imagePicker.dismiss(animated: true)
   }
